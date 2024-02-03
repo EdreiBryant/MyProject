@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PC_PartsReview_Website.Server.Data;
+using PC_PartsReview_Website.Server.IRepository;
+using PC_PartsReview_Website.Server.Repository;
 using PC_PartsReview_Website.Shared.Domain;
 
 namespace PC_PartsReview_Website.Server.Controllers
@@ -14,40 +16,32 @@ namespace PC_PartsReview_Website.Server.Controllers
     [ApiController]
     public class RatingsController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork; 
 
-        public RatingsController(ApplicationDbContext context)
+        public RatingsController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/Ratings
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Rating>>> GetRatings()
+        public async Task<IActionResult> GetRatings()
         {
-          if (_context.Ratings == null)
-          {
-              return NotFound();
-          }
-            return await _context.Ratings.ToListAsync();
+            var ratings = await _unitOfWork.Ratings.GetAll();
+            return Ok(ratings);
         }
 
         // GET: api/Ratings/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Rating>> GetRating(int id)
+        //public async Task<ActionResult<Rating>> GetRating(int id)
+        public async Task<IActionResult> GetRating(int id)
         {
-          if (_context.Ratings == null)
-          {
-              return NotFound();
-          }
-            var rating = await _context.Ratings.FindAsync(id);
-
+            var rating = await _unitOfWork.Ratings.Get(q => q.Id == id);
             if (rating == null)
-            {
-                return NotFound();
-            }
-
-            return rating;
+                {
+                    return NotFound();
+                }
+            return Ok(rating);
         }
 
         // PUT: api/Ratings/5
@@ -60,15 +54,15 @@ namespace PC_PartsReview_Website.Server.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(rating).State = EntityState.Modified;
+            _unitOfWork.Ratings.Update(rating);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _unitOfWork.Save(HttpContext);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!RatingExists(id))
+                if (!await RatingExists(id))
                 {
                     return NotFound();
                 }
@@ -86,12 +80,8 @@ namespace PC_PartsReview_Website.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Rating>> PostRating(Rating rating)
         {
-          if (_context.Ratings == null)
-          {
-              return Problem("Entity set 'ApplicationDbContext.Ratings'  is null.");
-          }
-            _context.Ratings.Add(rating);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.Ratings.Insert(rating);
+            await _unitOfWork.Save(HttpContext);
 
             return CreatedAtAction("GetRating", new { id = rating.Id }, rating);
         }
@@ -100,25 +90,23 @@ namespace PC_PartsReview_Website.Server.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRating(int id)
         {
-            if (_context.Ratings == null)
-            {
-                return NotFound();
-            }
-            var rating = await _context.Ratings.FindAsync(id);
+            var rating = await _unitOfWork.Ratings.Get(q => q.Id == id);
             if (rating == null)
             {
                 return NotFound();
             }
-
-            _context.Ratings.Remove(rating);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.Ratings.Delete(id);
+            await _unitOfWork.Save(HttpContext);
 
             return NoContent();
         }
 
-        private bool RatingExists(int id)
+        private async Task<bool> RatingExists(int id)
         {
-            return (_context.Ratings?.Any(e => e.Id == id)).GetValueOrDefault();
+            var rating = await _unitOfWork.Ratings.Get(q => q.Id == id);
+            return rating == null;
         }
+
+       
     }
 }

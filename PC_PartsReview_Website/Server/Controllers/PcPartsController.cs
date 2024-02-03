@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using PC_PartsReview_Website.Server.Data;
+using PC_PartsReview_Website.Server.IRepository;
 using PC_PartsReview_Website.Shared.Domain;
 
 namespace PC_PartsReview_Website.Server.Controllers
@@ -14,40 +16,56 @@ namespace PC_PartsReview_Website.Server.Controllers
     [ApiController]
     public class PcPartsController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        //private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public PcPartsController(ApplicationDbContext context)
+        //public PcPartsController(ApplicationDbContext context)
+        public PcPartsController(IUnitOfWork unitOfWork)
+
         {
-            _context = context;
+            //_context = context;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/PcParts
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PcPart>>> GetPcParts()
+        //public async Task<ActionResult<IEnumerable<PcPart>>> GetPcParts()
+        public async Task<IActionResult> GetPcParts()
+
         {
-          if (_context.PcParts == null)
-          {
-              return NotFound();
-          }
-            return await _context.PcParts.ToListAsync();
+            //  if (_context.PcParts == null)
+            //{
+            //    return NotFound();
+            //}
+            //  return await _context.PcParts.ToListAsync();
+            var pcparts = await _unitOfWork.PcParts.GetAll();
+            return Ok(pcparts);
         }
 
         // GET: api/PcParts/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<PcPart>> GetPcPart(int id)
-        {
-          if (_context.PcParts == null)
-          {
-              return NotFound();
-          }
-            var pcPart = await _context.PcParts.FindAsync(id);
+        //public async Task<ActionResult<PcPart>> GetPcPart(int id)
+        public async Task<IActionResult> GetPcPart(int id)
 
-            if (pcPart == null)
+        {
+          //  if (_context.PcParts == null)
+          //{
+          //    return NotFound();
+          //}
+          //  var pcPart = await _context.PcParts.FindAsync(id);
+
+          //  if (pcPart == null)
+          //  {
+          //      return NotFound();
+          //  }
+
+          //  return pcPart;
+          var pcpart = await _unitOfWork.PcParts.Get(q => q.Id == id);
+          if (pcpart == null) 
             {
                 return NotFound();
             }
-
-            return pcPart;
+          return Ok(pcpart);
         }
 
         // PUT: api/PcParts/5
@@ -60,15 +78,25 @@ namespace PC_PartsReview_Website.Server.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(pcPart).State = EntityState.Modified;
+            //_context.Entry(pcPart).State = EntityState.Modified;
+            _unitOfWork.PcParts.Update(pcPart);
 
             try
             {
-                await _context.SaveChangesAsync();
+                //await _context.SaveChangesAsync();
+                await _unitOfWork.Save(HttpContext);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PcPartExists(id))
+                //if (!PcPartExists(id))
+                //{
+                //    return NotFound();
+                //}
+                //else
+                //{
+                //    throw;
+                //}
+                if (!await PcPartExists(id)) 
                 {
                     return NotFound();
                 }
@@ -86,12 +114,14 @@ namespace PC_PartsReview_Website.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<PcPart>> PostPcPart(PcPart pcPart)
         {
-          if (_context.PcParts == null)
-          {
-              return Problem("Entity set 'ApplicationDbContext.PcParts'  is null.");
-          }
-            _context.PcParts.Add(pcPart);
-            await _context.SaveChangesAsync();
+          //if (_context.PcParts == null)
+          //{
+          //    return Problem("Entity set 'ApplicationDbContext.PcParts'  is null.");
+          //}
+          //  _context.PcParts.Add(pcPart);
+          //  await _context.SaveChangesAsync();
+            await _unitOfWork.PcParts.Insert(pcPart);
+            await _unitOfWork.Save(HttpContext);
 
             return CreatedAtAction("GetPcPart", new { id = pcPart.Id }, pcPart);
         }
@@ -100,25 +130,32 @@ namespace PC_PartsReview_Website.Server.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePcPart(int id)
         {
-            if (_context.PcParts == null)
-            {
-                return NotFound();
-            }
-            var pcPart = await _context.PcParts.FindAsync(id);
-            if (pcPart == null)
+            //if (_context.PcParts == null)
+            //{
+            //    return NotFound();
+            //}
+            //var pcPart = await _context.PcParts.FindAsync(id);
+            var pcpart = await _unitOfWork.PcParts.Get(q => q.Id == id);
+            if (pcpart == null)
             {
                 return NotFound();
             }
 
-            _context.PcParts.Remove(pcPart);
-            await _context.SaveChangesAsync();
+            //_context.PcParts.Remove(pcPart);
+            //await _context.SaveChangesAsync();
+
+            await _unitOfWork.PcParts.Delete(id);
+            await _unitOfWork.Save(HttpContext);
 
             return NoContent();
         }
 
-        private bool PcPartExists(int id)
+        //private bool PcPartExists(int id)
+        private async Task<bool> PcPartExists(int id)
         {
-            return (_context.PcParts?.Any(e => e.Id == id)).GetValueOrDefault();
+            //return (_context.PcParts?.Any(e => e.Id == id)).GetValueOrDefault();
+            var pcpart = await _unitOfWork.PcParts.Get(q => q.Id == id);
+            return pcpart != null;
         }
     }
 }
