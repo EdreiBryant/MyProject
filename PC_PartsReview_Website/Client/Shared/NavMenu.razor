@@ -1,0 +1,87 @@
+﻿@inject NavigationManager Navigation
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">Project_ProductReview</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+
+    <AuthorizeView>
+        <Authorized>
+
+            @* <Week5> *@
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="authentication/profile" Match="NavLinkMatch.All">
+                    <span class="oi oi-person" aria-hidden="true"></span> @context.User.Identity?.Name!
+                </NavLink>
+            </div>
+
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="#" @onclick="BeginLogOut" Match="NavLinkMatch.All">
+                    <span class="oi oi-account-logout" aria-hidden="true"></span> Log Out
+                </NavLink>
+            </div>
+            @* </Week5> *@
+
+        </Authorized>
+        <NotAuthorized>
+
+            @* <Week5> *@
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="authentication/register" Match="NavLinkMatch.All">
+                    <span class="oi oi-person" aria-hidden="true"></span> Register
+                </NavLink>
+            </div>
+
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="authentication/login" Match="NavLinkMatch.All">
+                    <span class="oi oi-account-login" aria-hidden="true"></span> Log In
+                </NavLink>
+            </div>
+            @* </Week5> *@
+
+        </NotAuthorized>
+    </AuthorizeView>
+
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="counter">
+                <span class="oi oi-plus" aria-hidden="true"></span> Counter
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="Reviews">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Reviews
+            </NavLink>
+        </div>
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    @* <Week5> *@
+    private void BeginLogOut()
+    {
+        Navigation.NavigateToLogout("authentication/logout");
+    }
+    @* </Week5> *@
+
+}
