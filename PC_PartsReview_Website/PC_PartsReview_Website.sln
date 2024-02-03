@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34202.233
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PC_PartsReview_Website.Server", "Server\PC_PartsReview_Website.Server.csproj", "{4F1ADE85-384E-4364-84CA-026E7338362B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PC_PartsReview_Website.Server", "Server\PC_PartsReview_Website.Server.csproj", "{4F1ADE85-384E-4364-84CA-026E7338362B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PC_PartsReview_Website.Client", "Client\PC_PartsReview_Website.Client.csproj", "{D1D7A1AF-C4C7-4E25-8EEA-30AA957E060F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PC_PartsReview_Website.Client", "Client\PC_PartsReview_Website.Client.csproj", "{D1D7A1AF-C4C7-4E25-8EEA-30AA957E060F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PC_PartsReview_Website.Shared", "Shared\PC_PartsReview_Website.Shared.csproj", "{C913FC43-B968-4D04-893F-241128E3B786}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PC_PartsReview_Website.Shared", "Shared\PC_PartsReview_Website.Shared.csproj", "{C913FC43-B968-4D04-893F-241128E3B786}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

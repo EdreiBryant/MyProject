@@ -29,7 +29,7 @@ namespace PC_PartsReview_Website.Server.Controllers
         //public async Task<ActionResult<IEnumerable<Review>>> GetReviews()
         public async Task<IActionResult> GetReviews()
         {
-            var reviews = await _unitOfWork.Reviews.GetAll();
+            var reviews = await _unitOfWork.Reviews.GetAll(includes: q => q.Include(x => x.PcPart).Include(x => x.Rating));
             return Ok(reviews);
         }
 

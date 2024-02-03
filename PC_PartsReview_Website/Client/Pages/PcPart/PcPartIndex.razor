@@ -1,0 +1,75 @@
+﻿@page "/pcparts"
+@inject HttpClient _client
+@inject IJSRuntime js
+@attribute [Authorize]
+
+<h3 class="card-title">Pc Parts</h3>
+<br />
+
+@if (PcParts == null)
+{
+    <div class="alert aler-info">Loading Pc Parts...</div>
+}
+else
+{
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pcpart in PcParts)
+            {
+                <tr>
+                    <td>@pcpart.Name</td>
+
+                    <td>
+
+                        <a href="/pcparts/view/@pcpart.Id" class="btn btn-primary">
+                            <span class="oi oi-book"></span>    
+                        </a>
+
+                        <a href="/pcparts/view/@pcpart.Id" class="btn btn-primary">
+                            <span class="oi oi-bookmark"></span>
+                        </a>
+
+                        <button class="btn btn-danger" @onclick="@(()=>Delete(pcpart.Id))">
+                            <span class="oi oi-delete"></span>
+                        </button>
+
+                    </td>
+
+                </tr>
+                
+            }
+        </tbody>
+
+    </table>
+}
+
+@code 
+{
+    private List<PcPart>? PcParts;
+
+    protected async override Task OnInitializedAsync()
+    {
+        PcParts = await _client.GetFromJsonAsync<List<PcPart>>($"{Endpoints.PcPartEndpoint}");
+    }
+
+    async Task Delete(int pcpartid)
+    {
+        if (PcParts != null)
+        {
+            var pcpart = PcParts.First(q => q.Id == pcpartid);
+            var confirm = await js.InvokeAsync<bool>("confirm", $"Delete {pcpart.Id}");
+            if (confirm)
+            {
+                await _client.DeleteAsync($"{Endpoints.PcPartEndpoint}/{pcpartid}");
+                await OnInitializedAsync();
+            }
+        }
+    }
+
+}

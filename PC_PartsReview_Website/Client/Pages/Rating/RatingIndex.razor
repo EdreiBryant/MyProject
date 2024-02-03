@@ -1,0 +1,77 @@
+﻿@page "/ratings"
+@inject HttpClient _client
+@inject IJSRuntime js
+@attribute [Authorize]
+
+<h3 class="card-title">Pc Ratings</h3>
+<br />
+
+@if (Ratings == null)
+{
+    <div class="alert aler-info">Loading Ratings...</div>
+}
+else
+{
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <th>Quality</th>
+                <th>PersonalRating</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var rating in Ratings)
+            {
+                <tr>
+                    <td>@rating.Quality</td>
+                    <td>@rating.PersonalRating</td>
+
+                    <td>
+
+                        <a href="/ratings/view/@rating.Id" class="btn btn-primary">
+                            <span class="oi oi-book"></span>
+                        </a>
+
+                        <a href="/ratings/view/@rating.Id" class="btn btn-primary">
+                            <span class="oi oi-bookmark"></span>
+                        </a>
+
+                        <button class="btn btn-danger" @onclick="@(()=>Delete(rating.Id))">
+                            <span class="oi oi-delete"></span>
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            }
+        </tbody>
+
+    </table>
+}
+
+@code
+{
+    private List<Rating>? Ratings;
+
+    protected async override Task OnInitializedAsync()
+    {
+        Ratings = await _client.GetFromJsonAsync<List<Rating>>($"{Endpoints.RatingEndpoint}");
+    }
+
+    async Task Delete(int ratingid)
+    {
+        if (Ratings != null)
+        {
+            var rating = Ratings.First(q => q.Id == ratingid);
+            var confirm = await js.InvokeAsync<bool>("confirm", $"Delete {rating.Id}");
+            if (confirm)
+            {
+                await _client.DeleteAsync($"{Endpoints.RatingEndpoint}/{ratingid}");
+                await OnInitializedAsync();
+            }
+        }
+    }
+
+}
