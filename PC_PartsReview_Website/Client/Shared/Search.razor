@@ -1,0 +1,29 @@
+﻿@page "/Search"
+@typeparam TEntity
+
+<div class="search-container">
+    <div class="form-group">
+        <input class="form-control" style="max-width:auto" placeholder="Search..."
+        @bind="searchPart" />
+    </div>
+
+    <button class="btn btn-primary" style="max-width:auto" @onclick="OnSearchClicked">
+        Search
+    </button>
+</div>
+
+@code
+{
+    [Parameter]
+    public List<TEntity> PcParts { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnSearch { get; set; }
+
+    private string searchPart;
+
+    private async Task OnSearchClicked()
+    {
+        await OnSearch.InvokeAsync(searchPart);
+    }
+}
