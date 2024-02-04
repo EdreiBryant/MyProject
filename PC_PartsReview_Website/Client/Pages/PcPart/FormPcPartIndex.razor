@@ -1,0 +1,26 @@
+﻿<EditForm Model="@pcpart" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label>Part Name: </label>
+        <div>
+            <InputText @bind-Value="@pcpart.Name" class="form-control" />
+            <ValidationMessage For="@(()=> pcpart.Name)" />
+        </div>
+    </div>
+
+    
+
+    <button type="submit" class="btn btn-success btn-block">
+        @ButtonText
+    </button>
+</EditForm>
+
+@code
+{
+    [Parameter] public PcPart? pcpart { get; set; }
+    [Parameter] public string ButtonText { get; set; } = "Save";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
+}

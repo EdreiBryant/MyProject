@@ -3,6 +3,11 @@
 @inject IJSRuntime js
 @attribute [Authorize]
 
+<a href="/ratings/create" class="btn btn-secondary">
+    <span class=" oi oi-plus"></span>
+    Create Rating
+</a>
+
 <h3 class="card-title">Pc Ratings</h3>
 <br />
 
@@ -29,13 +34,10 @@ else
 
                     <td>
 
-                        <a href="/ratings/view/@rating.Id" class="btn btn-primary">
+                        <a href="/ratings/edit/@rating.Id" class="btn btn-primary">
                             <span class="oi oi-book"></span>
                         </a>
 
-                        <a href="/ratings/view/@rating.Id" class="btn btn-primary">
-                            <span class="oi oi-bookmark"></span>
-                        </a>
 
                         <button class="btn btn-danger" @onclick="@(()=>Delete(rating.Id))">
                             <span class="oi oi-delete"></span>

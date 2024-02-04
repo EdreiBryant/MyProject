@@ -1,0 +1,24 @@
+﻿@page "/pcparts/edit/{id:int}"
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<h3 class="card-title">Update Rating</h3>
+
+<FormPcPartIndex ButtonText="Update" OnValidSubmit="EditPcPart" pcpart="pcpart" />
+
+@code
+{
+    [Parameter] public int id { get; set; }
+    PcPart? pcpart = new PcPart();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        pcpart = await _client.GetFromJsonAsync<PcPart>($"{Endpoints.PcPartEndpoint}/{id}");
+    }
+
+    async Task EditPcPart()
+    {
+        await _client.PutAsJsonAsync($"{Endpoints.PcPartEndpoint}/{id}", pcpart);
+        _navManager.NavigateTo("/pcparts/");
+    }
+}

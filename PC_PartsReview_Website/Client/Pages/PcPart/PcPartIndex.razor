@@ -3,6 +3,12 @@
 @inject IJSRuntime js
 @attribute [Authorize]
 
+<a href="/pcparts/create" class="btn btn-secondary">
+    <span class=" oi oi-plus"></span>
+    Add Pc Part
+</a>
+
+
 <h3 class="card-title">Pc Parts</h3>
 <br />
 
@@ -27,12 +33,8 @@ else
 
                     <td>
 
-                        <a href="/pcparts/view/@pcpart.Id" class="btn btn-primary">
-                            <span class="oi oi-book"></span>    
-                        </a>
-
-                        <a href="/pcparts/view/@pcpart.Id" class="btn btn-primary">
-                            <span class="oi oi-bookmark"></span>
+                        <a href="/pcparts/edit/@pcpart.Id" class="btn btn-primary">
+                            <span class="oi oi-pencil"></span>
                         </a>
 
                         <button class="btn btn-danger" @onclick="@(()=>Delete(pcpart.Id))">

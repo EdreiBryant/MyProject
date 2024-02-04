@@ -6,6 +6,11 @@
 <h3 class="card-title">Pc Part Reviews</h3>
 <br />
 
+<a href="/reviews/create" class="btn btn-secondary">
+    <span class=" oi oi-plus"></span>
+    Create Reviews
+</a>
+
 @if (Reviews == null)
 {
     <div class="alert aler-info">Loading Reviews...</div>
@@ -41,11 +46,7 @@ else
 
                     <td>
 
-                        <a href="/reviews/view/@review.Id" class="btn btn-primary">
-                            <span class="oi oi-book"></span>
-                        </a>
-
-                        <a href="/pcparts/view/@review.Id" class="btn btn-primary">
+                        <a href="/reviews/edit/@review.Id" class="btn btn-primary">
                             <span class="oi oi-bookmark"></span>
                         </a>
 

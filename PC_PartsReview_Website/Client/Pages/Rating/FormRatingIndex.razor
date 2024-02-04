@@ -1,0 +1,32 @@
+﻿<EditForm Model="@rating" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label>Quality: </label>
+        <div>
+            <InputText @bind-Value="@rating.Quality" class="form-control" />
+            <ValidationMessage For="@(()=> rating.Quality)" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Personal Rating: </label>
+        <div>
+            <InputText @bind-Value="@rating.PersonalRating" class="form-control" />
+            <ValidationMessage For="@(()=> rating.PersonalRating)" />
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success btn-block">
+        @ButtonText
+    </button>
+</EditForm>
+
+@code 
+{
+    [Parameter] public Rating? rating { get; set; }
+    [Parameter] public string ButtonText { get; set; } = "Save";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
+}

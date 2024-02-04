@@ -1,0 +1,48 @@
+﻿@page "/pcparts/create"
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<h3 class="card-title">Create PcPart Index</h3>
+<hr />
+<br />
+
+<EditForm Model="@pcpart" OnValidSubmit="CreatePcPart">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label>Name: </label>
+        <div>
+            <InputText @bind-Value="@pcpart.Name" class="form-control" />
+            <ValidationMessage For="@(()=> pcpart.Name)" />
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success btn-block">
+        Add Part
+    </button>
+
+</EditForm>
+
+@code
+{
+    PcPart pcpart = new PcPart();
+
+    // private IList<Rating>? Ratings;
+    // private IList<PcPart>? PcParts;
+
+
+    // protected async override Task OnInitializedAsync()
+    // {
+    //     Ratings = await _client.GetFromJsonAsync<List<Rating>>($"{Endpoints.RatingEndpoint}");
+    //     PcParts = await _client.GetFromJsonAsync<List<PcPart>>($"{Endpoints.PcPartEndpoint}");
+    // }
+
+
+    private async Task CreatePcPart()
+    {
+        await _client.PostAsJsonAsync(Endpoints.PcPartEndpoint, pcpart);
+        _navManager.NavigateTo("/pcparts/");
+    }
+
+}
